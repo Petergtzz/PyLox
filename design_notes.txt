@@ -1,0 +1,67 @@
+# Scanning 
+#
+# Scanner takes in raw source code as a series of characters and groups it into 
+# a series of chunks called tokens. These tokens are meaningful words that are 
+# then fed to the parser.
+# 
+#   1. Framework:
+#   ---------------------------------------------------------------------------------
+#   There will be two ways to run our PyLox code. From a file (command line) or REPL. 
+# 
+#       1.1 Interpreter base class (PyLox): 
+#       -----------------------------------------------------------------------------
+#       1. - How will this class look like?
+#       2. - What functionalities will it have?
+#       3. - What is the interface going to look like?
+#       4. - ... 
+#   
+#       PyLox class interface:
+#           What does it do and why:
+#           - Base class that reads raw source code into a series of tokens. 
+#           - Tokens are then fed to a parser.
+#   
+#       What methods does it have:
+#           run_file: runs the file provided in the command line
+#           rund_promt: runs as repl 
+#           run: wrapper that prints tokens emitted by the raw source code
+#       
+#       Error handling:
+#           Good practice to separate the code that generates the errors from the 
+#               code that reports them. 
+#           error: tells the user a syntax error is in their code
+#           report: display the line and message where error took place. 
+#
+#   2. Tokens and lexemes:
+#   -------------------------------------------------------------------------------
+#   Lexemes: sequence of characters that actually mean something.
+#       Example: var language = 'lox'; lexemes are: var, language, =, 'lox', ;
+#   Tokens: category of where a lexeme fits in based on the syntatic role in the
+#           programming language.
+#       Example: Type token = var, Assignment token =, string token is 'lox' 
+#
+#       1.2 TokenType class
+#       ---------------------------------------------------------------------------
+#       TokenType class interface:
+#           What does it do:
+#           - Categorize raw lexemes into their reserved keywords
+#
+#   3. Tokens
+#   -------------------------------------------------------------------------------
+#   For each identified token from the raw source code, store the token as a
+#   Token object. A token object includes it's type, lexeme, literal and line. 
+#       
+#       1.2 Token class
+#       ---------------------------------------------------------------------------
+#       Token class interface:
+#           What does it do:
+#           - Provide stucture to store information about individual tokens.
+#   
+#       What methods does it have:
+#           
+#       
+#       Error handling:
+#           
+
+
+                                                                                .
+                    
