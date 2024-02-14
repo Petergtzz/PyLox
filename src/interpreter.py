@@ -2,7 +2,6 @@
 
 from expr import NodeVisitor
 from error_handler import ErrorHandler
-from runtime_error import RuntimeError
 
 class Interpreter(NodeVisitor):
     '''

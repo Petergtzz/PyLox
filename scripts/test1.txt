@@ -1,5 +1,0 @@
-// PyLox first statement's test
-
-print "one";
-print true;
-print 2 + 1; 
