@@ -2,13 +2,15 @@
 
 from expr import NodeVisitor
 from error_handler import ErrorHandler
+from collections import ChainMap
 
 class Interpreter(NodeVisitor):
     '''
-    This class evaluates the result from a given parsed tree.  
+    This class traverses through a syntax tree 
     '''
     def __init__(self):
         self.error_handler = ErrorHandler()
+        self.env = ChainMap()
 
     #def interpret(self, expression):
     #    try: 
@@ -52,6 +54,9 @@ class Interpreter(NodeVisitor):
             return not self.is_truthy(right)
         else: 
             raise NotImplementedError(f'Bad operator {node.op}')
+        
+    def visit_Variable(self, node):
+        return self.env.get(node.name)
         
     def visit_Binary(self, node):
         left = self.visit(node.left)
@@ -97,6 +102,14 @@ class Interpreter(NodeVisitor):
     def visit_Print(self, node):
         value = self.visit(node.value)
         print(self.stringify(value))
+
+    def visit_VarDeclaration(self, node):
+        if node.initializer:
+            initializer = self.visit(node.initializer)
+        else:
+            initializer = None
+
+        self.env[node.name] = initializer
 
     def is_truthy(self, value):
         # Logic to decide what happens when you use something other than true or false
@@ -145,6 +158,7 @@ def test_interpreter():
     #assert interpret('print true;') == True
     #assert interpret('print 2 + 1;') == 3
     interpret('print (2 * 3);')
+    print(interpret("var a = 1;"))
     print('Good tests!')
     
 #test_interpreter()
