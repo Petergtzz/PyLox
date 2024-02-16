@@ -4,7 +4,7 @@ from enum import Enum, auto
 
 class TokenType(Enum):
     '''
-    Categorize lexemes into their reserved keywords. 
+    Categorize lexemes into their reserved keywords 
     '''
     # Single character tokens
     LEFT_PAREN = auto()
@@ -52,4 +52,5 @@ class TokenType(Enum):
     VAR = auto() 
     WHILE = auto()
 
+    # End of file
     EOF = auto()
