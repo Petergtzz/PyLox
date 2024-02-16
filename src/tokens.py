@@ -2,8 +2,20 @@
 
 class Token:
     '''
-    This class stores information about individual tokens. A token is a category assigned
-    to text words, also known as lexemes.  
+    This class stores information about individual tokens. A token represents
+    a meaningful word from a series of characters. 
+
+    Attributes
+    ----------
+    type : tokentype object
+        category assigned to a word
+    lexeme : str
+        sequence of characters forming an actual word
+    literal : str or float
+        actual values for strings and numbers
+    line : int
+        track where the token was found
+
     '''
     __slots__ = ['type', 'lexeme', 'literal', 'line']
     def __init__(self, type, lexeme, literal, line):
@@ -13,7 +25,6 @@ class Token:
         self.line = line
 
     def __str__(self):
-        #return getattr(self.type, 'name')
         return self.lexeme
     
     def __repr__(self):
