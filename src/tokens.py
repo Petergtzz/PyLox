@@ -2,8 +2,7 @@
 
 class Token:
     '''
-    This class stores information about individual tokens. A token represents
-    a meaningful word from a series of characters. 
+    This class represents an individual token. 
 
     Attributes
     ----------
