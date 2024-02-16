@@ -13,9 +13,9 @@ class Scanner:
     source : str
         raw source code
     error_handler : class
-        class that reports errors
+        reports errors
     tokens : list
-        list to store individual tokens from raw source code
+        stores individual tokens from raw source code
     start : int
         points to the first character in the lexeme being scanned
     current : int
@@ -150,7 +150,7 @@ class Scanner:
         # Closing ".
         self.advance()
 
-        # Trim the surrounding quotes.
+        # Trim the surrounding quotes
         value = self.source[self.start + 1: self.current - 1]
         self.add_token(TokenType.STRING, value)
 
