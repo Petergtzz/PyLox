@@ -4,17 +4,19 @@
 
 from error_handler import ErrorHandler
 from interpreter import Interpreter
+from parse import Parser
+from scanner import Scanner
 
 class PyLox:
     '''
-    This is a base class for the statically-typed language PyLox. 
+    Base class for the dinamically-typed language PyLox. 
 
     Attributes
     ----------
     interpreter : class
-        ...
+        traverses through the syntax tree
     error_handler : class
-        ...
+        reports errors
     '''
     def __init__(self):
         self.interpreter = Interpreter()
@@ -38,9 +40,6 @@ class PyLox:
                 pass
 
     def run(self, source):
-        from parse import Parser
-        from scanner import Scanner
-        
         scanner = Scanner(source, self.error_handler)
         tokens = scanner.scan_tokens()
         
