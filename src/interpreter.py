@@ -11,6 +11,7 @@ class Interpreter(NodeVisitor):
     def __init__(self):
         self.error_handler = ErrorHandler()
         self.env = ChainMap()
+        self.localmap = { }
 
     #def interpret(self, expression):
     #    try: 
@@ -56,7 +57,7 @@ class Interpreter(NodeVisitor):
             raise NotImplementedError(f'Bad operator {node.op}')
         
     def visit_Variable(self, node):
-        return self.env.get(node.name)
+        return self.env.get(node.name.lexeme)
         
     def visit_Binary(self, node):
         left = self.visit(node.left)
@@ -109,7 +110,7 @@ class Interpreter(NodeVisitor):
         else:
             initializer = None
 
-        self.env[node.name] = initializer
+        self.env[node.name.lexeme] = initializer
 
     def is_truthy(self, value):
         # Logic to decide what happens when you use something other than true or false
@@ -157,9 +158,11 @@ def test_interpreter():
     #assert interpret('(2+3)*4;') == '20' 
     #assert interpret('print true;') == True
     #assert interpret('print 2 + 1;') == 3
-    interpret('print (2 * 3);')
-    print(interpret("var a = 1;"))
-    print('Good tests!')
+    #interpret('print (2 * 3);')
+    interpret("var a = 1;\nvar b = 2;\nprint a;")
+    #interpret("var b = 2;")
+    #interpret("print a + b;")
+    #print('Good tests!')
     
 #test_interpreter()
         
