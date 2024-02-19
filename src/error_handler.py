@@ -12,7 +12,7 @@ class ErrorHandler(Exception):
     had_error : bool
         to ensure code is not executed that has known error
     had_runtime_error : bool
-        ...
+        to catch errors when a script is running
         
     '''
     def __init__(self):
