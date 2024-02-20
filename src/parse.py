@@ -22,8 +22,8 @@ class Parser:
         return statements
 
     def expression(self):
-        return self.equality()
-    
+        return self.assignment()
+
     def declaration(self):
         try:
             if self.match(TokenType.VAR):
@@ -37,6 +37,8 @@ class Parser:
     def statement(self):
         if self.match(TokenType.PRINT):
             return self.print_statement()
+        if self.match(TokenType.LEFT_BRACE):
+            return Block(self.block())
         return self.expression_statement()
     
     def print_statement(self):
@@ -59,6 +61,30 @@ class Parser:
         self.consume(TokenType.SEMICOLON, "Expect ';' after expression.")
         return ExprStmt(value)
     
+    def block(self):
+        statements = list()
+
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            statements.append(self.declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.")
+        return statements
+    
+    def assignment(self):
+        expr = self.equality()
+
+        if self.match(TokenType.EQUAL):
+            equals = self.previous()
+            value = self.assignment()
+
+            if isinstance(expr, Variable):
+                name = expr.name
+                return Assign(name, value)
+            
+            self.error(equals, "Invalid assignment target.")
+
+        return expr
+
     def equality(self):
         expr = self.comparison()
         
@@ -208,6 +234,8 @@ def test_parser():
     #assert parse("-2+3;") == Binary(Unary(Token(TokenType.MINUS, '-', None, 1), Literal(2)), Token(TokenType.PLUS, '+', None, 1), Literal(3))
     #assert parse("2+3*4;") == Binary(Literal(2), Token(TokenType.PLUS, '+', None, 1), Binary(Literal(3), Token(TokenType.STAR, '*', None, 1), Literal(4)))
     parse('var a = 1;')
+    parse('var a = 1;')
+    parse('print a + b;')
     parse('print (2+2);')
 
     print('Good Tests!')

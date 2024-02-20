@@ -19,7 +19,7 @@ class Node:
         assert len(args) == len(type(self)._fields)
         # Match the instance field names to it's corresponging arguments
         for name, val in zip(type(self)._fields, args):
-            setattr(self, name , val)
+            setattr(self, name, val)
 
     def __repr__(self):
         args = ', '.join(f'{key}={value!r}' for key, value in vars(self).items())
@@ -47,6 +47,9 @@ class Unary(Expr):
 class Variable(Expr):
     _fields = ['name']
 
+class Assign(Expr):
+    _fields = ['name', 'value']
+
 # -- Statements represent actions with no associated value
 class Statement(Node):
     pass
@@ -56,6 +59,9 @@ class Print(Statement):
 
 class ExprStmt(Statement):
     _fields = ['value']
+
+class Block(Statement):
+    _fields = ['statements']
 
 # -- Declarations are special kinds of statements that declare the existence of something
 class Declaration(Statement):

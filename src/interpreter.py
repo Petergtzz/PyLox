@@ -11,14 +11,6 @@ class Interpreter(NodeVisitor):
     def __init__(self):
         self.error_handler = ErrorHandler()
         self.env = ChainMap()
-        self.localmap = { }
-
-    #def interpret(self, expression):
-    #    try: 
-    #        value = self.visit(expression)
-    #        print(self.stringify(value))
-    #    except RuntimeError as error:
-    #        self.error_handler.runtime_error(error)
         
     def interpret(self, node):
         try: 
@@ -38,6 +30,15 @@ class Interpreter(NodeVisitor):
             return True
         else:
             self.error_handler.error(node, 'operand must be a number')
+
+    def execute_Block(self, node, env):
+        previous = self.env
+        self.env = env
+        try:
+            for stmt in node: 
+                self.visit(stmt)
+        finally:
+            self.env = previous
 
     def visit_Literal(self, node):
         return node.value
@@ -97,6 +98,7 @@ class Interpreter(NodeVisitor):
             case '==':
                 return self.is_equal(left, right)
             
+     # TODO: Check if return in valid       
     def visit_ExprStmt(self, node):
         self.visit(node.value)
     
@@ -112,6 +114,15 @@ class Interpreter(NodeVisitor):
 
         self.env[node.name.lexeme] = initializer
 
+    # IMPORTANT: Check for runtime errors
+    def visit_Assign(self, node):
+        value = self.visit(node.value)
+        self.env[node.name.lexeme] = value
+        return value 
+    
+    def visit_Block(self, node):
+        self.execute_Block(node.statements, self.env.new_child())
+ 
     def is_truthy(self, value):
         # Logic to decide what happens when you use something other than true or false
         if value is None:
@@ -159,11 +170,31 @@ def test_interpreter():
     #assert interpret('print true;') == True
     #assert interpret('print 2 + 1;') == 3
     #interpret('print (2 * 3);')
-    interpret("var a = 1;\nvar b = 2;\nprint a;")
+    #interpret("var a = 1;\nvar b = 2;\nprint a + b;")
+    #interpret("var a = 1;\nprint a = 2;")
+    interpret('var a = "global a";\n'
+              'var b = "global b";\n'
+              'var c = "global c";\n'
+              '{\n'
+              '  var a = "outer a";\n'
+              '  var b = "outer b";\n'
+              '  {\n'
+              '    var a = "inner a";\n'
+              '    print a;\n'
+              '    print b;\n'
+              '    print c;\n'
+              '  }\n'  
+              '  print a;\n'
+              '  print b;\n'
+              '  print c;\n'
+              '}\n'
+              'print a;\n'
+              'print b;\n'
+              'print c;')
     #interpret("var b = 2;")
     #interpret("print a + b;")
     #print('Good tests!')
     
-#test_interpreter()
+test_interpreter()
         
 
