@@ -41,6 +41,9 @@ class Grouping(Expr):
 class Literal(Expr):
     _fields = ['value']
 
+class Logical(Expr):
+    _fields = ['left', 'op', 'right']
+
 class Unary(Expr):
     _fields = ['op', 'right']
 
@@ -62,6 +65,9 @@ class ExprStmt(Statement):
 
 class Block(Statement):
     _fields = ['statements']
+
+class IfStmt(Statement):
+    _fields = ['test', 'consequence', 'alternative']
 
 # -- Declarations are special kinds of statements that declare the existence of something
 class Declaration(Statement):

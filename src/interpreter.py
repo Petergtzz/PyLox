@@ -3,6 +3,7 @@
 from expr import NodeVisitor
 from error_handler import ErrorHandler
 from collections import ChainMap
+from token_type import TokenType
 
 class Interpreter(NodeVisitor):
     '''
@@ -43,6 +44,16 @@ class Interpreter(NodeVisitor):
     def visit_Literal(self, node):
         return node.value
     
+    def visit_Logical(self, node):
+        left = self.visit(node.left)
+
+        if node.op.lexeme == TokenType.OR:
+            if self.is_truthy(left):
+                return left
+            elif not self.is_truthy(left):
+                return left
+        return self.visit(node.right)
+
     def visit_Grouping(self, node):
         return self.visit(node.value)
     
@@ -101,6 +112,12 @@ class Interpreter(NodeVisitor):
      # TODO: Check if return in valid       
     def visit_ExprStmt(self, node):
         self.visit(node.value)
+
+    def visit_IfStmt(self, node):
+        if self.is_truthy(self.visit(node.test)):
+            self.visit(node.consequence)
+        elif node.alternative:
+            self.visit(node.alternative)
     
     def visit_Print(self, node):
         value = self.visit(node.value)
@@ -195,6 +212,6 @@ def test_interpreter():
     #interpret("print a + b;")
     #print('Good tests!')
     
-test_interpreter()
+#test_interpreter()
         
 

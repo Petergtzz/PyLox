@@ -35,11 +35,24 @@ class Parser:
             return None
         
     def statement(self):
+        if self.match(TokenType.IF):
+            return self.if_statement()
         if self.match(TokenType.PRINT):
             return self.print_statement()
         if self.match(TokenType.LEFT_BRACE):
             return Block(self.block())
         return self.expression_statement()
+    
+    def if_statement(self):
+        self.consume(TokenType.LEFT_PAREN,  "Expect '(' after 'if'.")
+        test = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.")
+
+        consequence = self.statement()
+        alternative = None
+        if self.match(TokenType.ELSE):
+            alternative = self.statement()
+        return IfStmt(test, consequence, alternative)
     
     def print_statement(self):
         value = self.expression()
@@ -71,7 +84,7 @@ class Parser:
         return statements
     
     def assignment(self):
-        expr = self.equality()
+        expr = self._or()
 
         if self.match(TokenType.EQUAL):
             equals = self.previous()
@@ -82,6 +95,26 @@ class Parser:
                 return Assign(name, value)
             
             self.error(equals, "Invalid assignment target.")
+
+        return expr
+    
+    def _or(self):
+        expr = self._and()
+    
+        if self.match(TokenType.OR):
+            operator = self.previous()
+            right = self._and()
+            return Logical(expr, operator, right)
+        
+        return expr
+    
+    def _and(self):
+        expr = self.equality()
+
+        if self.match(TokenType.AND):
+            operator = self.previous
+            right = self.equality()
+            return Logical(expr, operator, right)
 
         return expr
 
