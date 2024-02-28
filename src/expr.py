@@ -69,6 +69,12 @@ class Block(Statement):
 class IfStmt(Statement):
     _fields = ['test', 'consequence', 'alternative']
 
+class WhileStmt(Statement):
+    _fields = ['test', 'body']
+
+class Statements(Statement):
+    _fields = ['statements']
+
 # -- Declarations are special kinds of statements that declare the existence of something
 class Declaration(Statement):
     pass
@@ -148,6 +154,6 @@ if __name__ == '__main__':
 
     result_1 = printer.print_ast(test_1)  
     result_2 = printer.print_ast(test_2)
-    assert result_1 == '(* (- 123) (group 45.67))' # Use the name of the token, not the value
+    assert result_1 == '(* (- 123) (group 45.67))' 
     assert result_2 == '(== (+ (+ 1 (group (* 8 9))) 14) 38)'
     print('Good Tests!')

@@ -35,13 +35,51 @@ class Parser:
             return None
         
     def statement(self):
+        if self.match(TokenType.FOR):
+            return self.for_statement()
         if self.match(TokenType.IF):
             return self.if_statement()
         if self.match(TokenType.PRINT):
             return self.print_statement()
+        if self.match(TokenType.WHILE):
+            return self.while_statement()
         if self.match(TokenType.LEFT_BRACE):
             return Block(self.block())
         return self.expression_statement()
+    
+    def for_statement(self):
+        self.consume(TokenType.LEFT_PAREN,  "Expect '(' after 'for'.")
+
+        if self.match(TokenType.SEMICOLON):
+            initializer = None
+        elif self.match(TokenType.VAR):
+            initializer = self.var_declaration()
+        else: 
+            initializer = self.expression_statement()
+
+        condition = None
+        if not self.check(TokenType.SEMICOLON):
+            condition = self.expression()
+        self.consume(TokenType.SEMICOLON,  "Expect ';' after loop condition.")
+
+        increment = None
+        if not self.check(TokenType.RIGHT_PAREN):
+            increment = self.expression()
+        self.consume(TokenType.RIGHT_PAREN,  "Expect ')' after for clauses.")
+
+        body = self.statement()
+
+        if increment is not None:
+            body = Block([body, ExprStmt(increment)])
+        
+        if condition is None:
+            condition = Literal(True)
+        body = WhileStmt(condition, body)
+
+        if initializer is not None: 
+            body = Block([initializer, body])
+
+        return body
     
     def if_statement(self):
         self.consume(TokenType.LEFT_PAREN,  "Expect '(' after 'if'.")
@@ -69,13 +107,20 @@ class Parser:
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration")
         return VarDeclaration(name, identifier)
     
+    def while_statement(self):
+        self.consume(TokenType.LEFT_PAREN,  "Expect '(' after 'while'.")
+        test = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.")
+        body = self.statement()
+        return WhileStmt(test, body)
+    
     def expression_statement(self):
         value = self.expression()
         self.consume(TokenType.SEMICOLON, "Expect ';' after expression.")
         return ExprStmt(value)
     
     def block(self):
-        statements = list()
+        statements = []
 
         while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
             statements.append(self.declaration())
@@ -101,20 +146,20 @@ class Parser:
     def _or(self):
         expr = self._and()
     
-        if self.match(TokenType.OR):
+        while self.match(TokenType.OR):
             operator = self.previous()
             right = self._and()
-            return Logical(expr, operator, right)
+            expr = Logical(expr, operator, right)
         
         return expr
     
     def _and(self):
         expr = self.equality()
 
-        if self.match(TokenType.AND):
-            operator = self.previous
+        while self.match(TokenType.AND):
+            operator = self.previous()
             right = self.equality()
-            return Logical(expr, operator, right)
+            expr = Logical(expr, operator, right)
 
         return expr
 
@@ -259,19 +304,22 @@ def test_parser():
         return parser.parse()
 
     # Test precedence and assossiativty
-    #assert parse("2;") == Literal(2)
-    #assert parse('"hello";') == Literal('hello')
-    #assert parse("true;") == Literal(True)
-    #assert parse("false;") == Literal(False)
-    #assert parse("nil;") == Literal(None)
-    #assert parse("-2+3;") == Binary(Unary(Token(TokenType.MINUS, '-', None, 1), Literal(2)), Token(TokenType.PLUS, '+', None, 1), Literal(3))
-    #assert parse("2+3*4;") == Binary(Literal(2), Token(TokenType.PLUS, '+', None, 1), Binary(Literal(3), Token(TokenType.STAR, '*', None, 1), Literal(4)))
-    parse('var a = 1;')
-    parse('var a = 1;')
-    parse('print a + b;')
-    parse('print (2+2);')
+    assert parse('2;') == [ExprStmt(Literal(2))]
+    assert parse('true;') == [ExprStmt(Literal(True))]
+    assert parse('false;') == [ExprStmt(Literal(False))]
+    assert parse('nil;') == [ExprStmt(Literal(None))]
+    assert parse('print "hello";') == [Print(Literal('hello'))]
+    assert parse('print 2;') == [Print(Literal(2))] 
+    test = parse('var a = 0;\n'
+              'var temp;\n'
+              'for (var b = 1; a < 10000; b = temp + b) {\n'
+              'print a;\n'
+              'temp = a;\n'
+              'a = b;\n'
+              '}')
+    print(test)
+    print('All tests passed!')
 
-    print('Good Tests!')
-
-#test_parser()
+if __name__ == '__main__':
+    test_parser()
 

@@ -23,8 +23,8 @@ class Token:
         self.literal = literal
         self.line = line
 
-    def __str__(self):
-        return self.lexeme
+    #def __str__(self):
+    #    return self.lexeme
     
     def __repr__(self):
-        return f'Token(type={self.type}, lexeme={self.lexeme!r}, value={self.literal!r}, line={self.line!r})'
+        return f'Token(type={self.type}, lexeme={self.lexeme!r}, literal={self.literal!r}, line={self.line!r})'

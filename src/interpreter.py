@@ -3,7 +3,6 @@
 from expr import NodeVisitor
 from error_handler import ErrorHandler
 from collections import ChainMap
-from token_type import TokenType
 
 class Interpreter(NodeVisitor):
     '''
@@ -34,8 +33,8 @@ class Interpreter(NodeVisitor):
 
     def execute_Block(self, node, env):
         previous = self.env
-        self.env = env
         try:
+            self.env = env
             for stmt in node: 
                 self.visit(stmt)
         finally:
@@ -47,13 +46,11 @@ class Interpreter(NodeVisitor):
     def visit_Logical(self, node):
         left = self.visit(node.left)
 
-        if node.op.lexeme == TokenType.OR:
-            if self.is_truthy(left):
-                return left
-            elif not self.is_truthy(left):
-                return left
-        return self.visit(node.right)
-
+        if node.op.lexeme == 'or':
+            return left if self.is_truthy(left) else self.visit(node.right)
+        if node.op.lexeme == 'and':
+            return self.visit(node.right) if self.is_truthy(left) else left
+                
     def visit_Grouping(self, node):
         return self.visit(node.value)
     
@@ -70,6 +67,10 @@ class Interpreter(NodeVisitor):
         
     def visit_Variable(self, node):
         return self.env.get(node.name.lexeme)
+    
+    def visit_WhileStmt(self, node):
+        while self.is_truthy(self.visit(node.test)):
+            self.visit(node.body)
         
     def visit_Binary(self, node):
         left = self.visit(node.left)
@@ -189,25 +190,33 @@ def test_interpreter():
     #interpret('print (2 * 3);')
     #interpret("var a = 1;\nvar b = 2;\nprint a + b;")
     #interpret("var a = 1;\nprint a = 2;")
-    interpret('var a = "global a";\n'
-              'var b = "global b";\n'
-              'var c = "global c";\n'
-              '{\n'
-              '  var a = "outer a";\n'
-              '  var b = "outer b";\n'
-              '  {\n'
-              '    var a = "inner a";\n'
-              '    print a;\n'
-              '    print b;\n'
-              '    print c;\n'
-              '  }\n'  
-              '  print a;\n'
-              '  print b;\n'
-              '  print c;\n'
-              '}\n'
+    #interpret('var a = "global a";\n'
+    #          'var b = "global b";\n'
+    #          'var c = "global c";\n'
+    #          '{\n'
+    #          '  var a = "outer a";\n'
+    #          '  var b = "outer b";\n'
+    #          '  {\n'
+    #          '    var a = "inner a";\n'
+    #          '    print a;\n'
+    #          '    print b;\n'
+    #          '    print c;\n'
+    #          '  }\n'  
+    #          '  print a;\n'
+    #          '  print b;\n'
+    #          '  print c;\n'
+    #          '}\n'
+    #          'print a;\n'
+    #          'print b;\n'
+    #          'print c;')
+    #interpret('print nil or "yes";')
+    interpret('var a = 0;\n'
+              'var temp;\n'
+              'for (var b = 1; a < 10000; b = temp + b) {\n'
               'print a;\n'
-              'print b;\n'
-              'print c;')
+              'temp = a;\n'
+              'a = b;\n'
+              '}')
     #interpret("var b = 2;")
     #interpret("print a + b;")
     #print('Good tests!')
