@@ -8,5 +8,9 @@ This implementation is not widely used for general-purpose languages since it te
 ## Why Pylox?
 In Crafting Interpreters, two implementation of Lox are described. One focusing on simple, clean, and clear code in Java, and one focused on performance and low-level interaction and implementation in C. I decided to write the clean interpreter in Python. 
 
-This is Incomplete.
-As of right now, this implementation is incomplete, and any and all code is my interpretation of Bob’s ideas.
+## Status
+This implementation is incomplete, and any and all code is my interpretation of Bob’s ideas.
+
+
+
+
