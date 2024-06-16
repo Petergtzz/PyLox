@@ -18,6 +18,44 @@ This implementation is incomplete, and any and all code is my interpretation of 
 var a = 1;
 var b = 2;
 print a + b;
+
+Outputs: 
+3
+```
+
+```
+// Testing scope
+
+var a = "global a";
+var b = "global b";
+var c = "global c";
+{
+  var a = "outer a";
+  var b = "outer b";
+  {
+    var a = "inner a";
+    print a;
+    print b;
+    print c;
+  }
+  print a;
+  print b;
+  print c;
+}
+print a;
+print b;
+print c;
+
+Outputs:
+inner a
+outer b
+global c
+outer a
+outer b
+global c
+global a
+global b
+global c
 ```
 
 
