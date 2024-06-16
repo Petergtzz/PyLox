@@ -12,6 +12,14 @@ In Crafting Interpreters, two implementation of Lox are described. One focusing 
 This implementation is incomplete, and any and all code is my interpretation of Bob’s ideas.
 
 ## Examples
+```
+// Interpreting global variables
+
+var a = 1;
+var b = 2;
+print a + b;
+```
+
 
 
 
